@@ -46,7 +46,7 @@ if (isset($_GET['sucesso'])) {
             <a class="logo" href="./index.php"></a>
 
             <div class="cabecalho__icones">
-                <a href="./pages/enviar-video.html" class="cabecalho__videos"></a>
+                <a href="pages/enviar-video.html" class="cabecalho__videos"></a>
                 <a href="./pages/login.html" class="cabecalho__sair">Sair</a>
             </div>
         </nav>
@@ -55,7 +55,6 @@ if (isset($_GET['sucesso'])) {
 
     <ul class="videos__container" alt="videos alura">
         <?php foreach ($videosList as $video): ?>
-            <?php if (str_starts_with($video['url'],'http')): ?>
         <li class="videos__item">
             <iframe width="100%" height="72%" src="<?php echo $video['url'];?>"
                 title="YouTube video player" frameborder="0"
@@ -65,12 +64,11 @@ if (isset($_GET['sucesso'])) {
                 <img src="./img/logo.png" alt="logo canal alura">
                 <h3><?php echo $video['title'];?></h3>
                 <div class="acoes-video">
-                    <a href="./pages/enviar-video.html">Editar</a>
-                    <a href="/remover-video.php?id=<?=$video['id'];?>">Excluir</a>
+                    <a href="formulario.php?id=<?=$video['id'];?>">Editar</a>
+                    <a href="remover-video.php?id=<?=$video['id'];?>">Excluir</a>
                 </div>
             </div>
         </li>
-        <?php endif; ?>
         <?php endforeach; ?>
     </ul>
 </body>
