@@ -2,24 +2,43 @@
 
 declare(strict_types=1);
 
+use Alura\Mvc\Controller\{DeleteVideoController,
+    EditVideoController,
+    Error404Controller,
+    NewVideoController,
+    VideoFormController,
+    VideoListController};
+use Alura\Mvc\Repository\VideoRepository;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-if (!array_key_exists('PATH_INFO', $_SERVER) || $_SERVER['PATH_INFO'] == '/') {
-    require_once __DIR__ . '/../listagem-videos.php';
-} elseif ($_SERVER['PATH_INFO'] == '/novo-video'){
-    if ($_SERVER['REQUEST_METHOD'] == 'GET'){
-        require_once __DIR__ . '/../formulario.php';
-    } elseif ($_SERVER['REQUEST_METHOD'] = 'POST') {
-        require_once __DIR__ . '/../novo-video.php';
+$host = 'localhost';
+$dbname = 'db-aluraplay';
+$username = 'root';
+$password = '';
+
+$pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+$videoRepository = new VideoRepository($pdo);
+
+
+if (!array_key_exists('PATH_INFO', $_SERVER) || $_SERVER['PATH_INFO'] === '/') {
+    $controller = new VideoListController($videoRepository);
+} elseif ($_SERVER['PATH_INFO'] === '/novo-video') {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $controller = new VideoFormController($videoRepository);
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller = new NewVideoController($videoRepository);
     }
-} elseif ($_SERVER['PATH_INFO'] == '/editar-video') {
-    if ($_SERVER['REQUEST_METHOD'] == 'GET'){
-        require_once __DIR__ . '/../formulario.php';
-    } elseif ($_SERVER['REQUEST_METHOD'] = 'POST') {
-        require_once __DIR__ . '/../editar-video.php';
+} elseif ($_SERVER['PATH_INFO'] === '/editar-video') {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $controller = new VideoFormController($videoRepository);
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller = new EditVideoController($videoRepository);
     }
-} elseif ($_SERVER['PATH_INFO'] == '/remover-video') {
-    require_once __DIR__ . '/../remover-video.php';
+} elseif ($_SERVER['PATH_INFO'] === '/remover-video') {
+    $controller = new DeleteVideoController($videoRepository);
 } else {
-    http_response_code(404);
+    $controller = new Error404Controller();
 }
+/** @var Alura\Mvc\Controller\Controller $controller */
+$controller->processaRequisicao();

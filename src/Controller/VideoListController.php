@@ -1,37 +1,22 @@
 <?php
 
+namespace Alura\Mvc\Controller;
+
+use Alura\Mvc\Entity\Video;
 use Alura\Mvc\Repository\VideoRepository;
+use PDO;
 
-$host = 'localhost';
-$dbname = 'db-aluraplay';
-$username = 'root';
-$password = '';
-
-$pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-
-$repository = new VideoRepository($pdo);
-$videosList = $repository->all();
-
-if (isset($_GET['sucesso'])) {
-    $resultado = $_GET['sucesso'];
-    if ($resultado == '0') {
-        echo '
-            <script>
-            alert("Falha ao executar ação!");
-            window.location.href = "/";
-            </script>
-        ';
-    } else {
-        echo '
-            <script>
-            alert("Ação executada com sucesso!");
-            window.location.href = "/";
-            </script>
-        ';
+class VideoListController
+{
+    public function __construct(private VideoRepository $videoRepository)
+    {
     }
-}
-?>
-<?php require_once 'inicio-html.php'; ?>
+
+    public function processaRequisicao(): void
+    {
+        $videosList = $this->videoRepository->all();
+
+        require_once __DIR__ . '/../../inicio-html.php'; ?>
 
     <ul class="videos__container" alt="videos alura">
         <?php foreach ($videosList as $video): ?>
@@ -51,4 +36,6 @@ if (isset($_GET['sucesso'])) {
         </li>
         <?php endforeach; ?>
     </ul>
-<?php require_once 'fim-html.php'; ?>
+        <?php require_once __DIR__ . '/../../fim-html.php';
+    }
+}
