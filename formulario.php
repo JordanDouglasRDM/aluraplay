@@ -21,7 +21,7 @@ if ($id !== false && $id !== null) {
 <?php require_once 'inicio-html.php';?>
     <main class="container">
         <form class="container__formulario"
-              action="" method="post">
+              action="/editar-video?id=<?= $video['id']; ?>" method="post">
             <h2 class="formulario__titulo">Envie um vídeo!</h2>
                 <div class="formulario__campo">
                     <label class="campo__etiqueta" for="url">Link embed</label>

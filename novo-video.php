@@ -1,4 +1,8 @@
 <?php
+
+use Alura\Mvc\Entity\Video;
+use Alura\Mvc\Repository\VideoRepository;
+
 $host = 'localhost';
 $dbname = 'db-aluraplay';
 $username = 'root';
@@ -16,14 +20,9 @@ if ($titulo === false && $titulo !== null) {
     header('Location:./?sucesso=0');
     exit();
 }
+$repository = new VideoRepository($pdo);
 
-$sql = 'INSERT INTO videos (url, title) VALUES (?,?)';
-$stmt = $pdo->prepare($sql);
-
-$stmt->bindValue(1, $url);
-$stmt->bindValue(2, $titulo);
-
-if ($stmt->execute() === false) {
+if ($repository->add(new Video($url, $titulo)) === false) {
     header('Location:./?sucesso=0' );
 }else {
     header('Location:./?sucesso=1' );
