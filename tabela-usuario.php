@@ -6,4 +6,4 @@ $password = '';
 
 $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
 
-$pdo->exec('ALTER TABLE videos ADD COLUMN image_file VARCHAR(255)');
+$pdo->exec('ALTER TABLE videos ADD COLUMN image_path VARCHAR(255)');

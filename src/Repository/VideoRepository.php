@@ -15,10 +15,11 @@ class VideoRepository
 
     public function add(Video $video): Video
     {
-        $sql = 'INSERT INTO videos (url, title) VALUES (?,?)';
+        $sql = 'INSERT INTO videos (url, title, image_path) VALUES (:url, :title, :image_path)';
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(1, $video->url);
-        $stmt->bindValue(2, $video->title);
+        $stmt->bindValue(':url', $video->url);
+        $stmt->bindValue(':title', $video->title);
+        $stmt->bindValue(':image_path', $video->getFilePath());
 
         if ($stmt->execute() === false) {
             throw new InvalidArgumentException();
@@ -38,13 +39,35 @@ class VideoRepository
         return $result;
     }
 
+    public function removeFrame(int $id): bool
+    {
+        $sqlQuery = 'UPDATE videos SET image_path = null WHERE id = ?';
+
+        $stmt = $this->pdo->prepare($sqlQuery);
+        $stmt->bindValue(1,$id, PDO::PARAM_INT);
+        $result = $stmt->execute();
+        return $result;
+    }
+
     public function update(Video $video): bool
     {
-        $sqlQuery = 'UPDATE videos SET url = :url, title = :title WHERE id = :id;';
+        $updateImageSql = '';
+        if ($video->getFilePath() !== null) {
+            $updateImageSql = ', image_path = :image_path';
+        }
+        $sqlQuery = "UPDATE videos SET
+                        url = :url,
+                        title = :title
+                        $updateImageSql
+                        WHERE id = :id;";
         $stmt = $this->pdo->prepare($sqlQuery);
-        $stmt->bindValue(':url',$video->url);
-        $stmt->bindValue(':title',$video->title);
-        $stmt->bindValue(':id',$video->id, PDO::PARAM_INT);
+        $stmt->bindValue(':url', $video->url);
+        $stmt->bindValue(':title', $video->title);
+        $stmt->bindValue(':id', $video->id, PDO::PARAM_INT);
+
+        if ($video->getFilePath() !== null) {
+            $stmt->bindValue(':image_path', $video->getFilePath());
+        }
         $result = $stmt->execute();
         return $result;
     }
@@ -55,13 +78,13 @@ class VideoRepository
     public function all(): array
     {
         $videoList = $this->pdo
-        ->query('SELECT * FROM videos;')
-        ->fetchAll(\PDO::FETCH_ASSOC);
-    return array_map(
-        $this->hydrateVideo(...),
-        $videoList
-    );
-}
+            ->query('SELECT * FROM videos;')
+            ->fetchAll(\PDO::FETCH_ASSOC);
+        return array_map(
+            $this->hydrateVideo(...),
+            $videoList
+        );
+    }
 
     public function find(int $id)
     {
@@ -76,6 +99,9 @@ class VideoRepository
     {
         $video = new Video($videoData['url'], $videoData['title']);
         $video->setId($videoData['id']);
+        if ($videoData['image_path'] !== null) {
+            $video->setFilePath($videoData['image_path']);
+        }
 
         return $video;
     }

@@ -13,6 +13,7 @@ require_once __DIR__ . '/inicio-html.php';
                    value="<?= $video?->url; ?>"
                    class="campo__escrita"
                    required
+                   autofocus
                    placeholder="Por exemplo: https://www.youtube.com/embed/FAY1K2aUg5g"
                    id='url' />
         </div>
@@ -32,7 +33,6 @@ require_once __DIR__ . '/inicio-html.php';
             <input name="image"
                    class="campo__escrita"
                    accept="image/*"
-                   required
                    type="file"
                    id='image' />
         </div>
