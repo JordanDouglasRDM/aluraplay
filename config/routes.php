@@ -3,6 +3,7 @@
 use Alura\Mvc\Controller\{DeleteImageFrameController,
     DeleteVideoController,
     EditVideoController,
+    JsonVideoListController,
     LoginController,
     LoginFormController,
     LogoutController,
@@ -20,5 +21,7 @@ return [
     'GET|/login' => LoginFormController::class,
     'POST|/login' => LoginController::class,
     'GET|/logout' => LogoutController::class,
-    'GET|/remover-frame' => DeleteImageFrameController::class
+    'GET|/remover-frame' => DeleteImageFrameController::class,
+    'GET|/videos-json' => JsonVideoListController::class,
+    'POST|/videos' =>,
 ];

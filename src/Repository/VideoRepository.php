@@ -44,7 +44,7 @@ class VideoRepository
         $sqlQuery = 'UPDATE videos SET image_path = null WHERE id = ?';
 
         $stmt = $this->pdo->prepare($sqlQuery);
-        $stmt->bindValue(1,$id, PDO::PARAM_INT);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $result = $stmt->execute();
         return $result;
     }
@@ -104,5 +104,14 @@ class VideoRepository
         }
 
         return $video;
+    }
+
+    public function createSlug(string $nome): string
+    {
+        $file_parts = pathinfo($nome);
+        $slug_base = preg_replace('/[^A-Za-z0-9-]+/', '-', $file_parts['filename']);
+        $slug_base = strtolower($slug_base);
+        $slug = $slug_base . '.' . $file_parts['extension'];
+        return $slug;
     }
 }

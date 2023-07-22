@@ -21,6 +21,12 @@ $pathInfo = $_SERVER['PATH_INFO'] ?? '/';
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 
 session_start();
+if (isset($_SESSION['logado'])) {
+    $originalInfo = $_SESSION['logado'];
+    unset($_SESSION['logado']);
+    session_regenerate_id();
+    $_SESSION['logado'] = $originalInfo;
+}
 $isLoginRoute = $pathInfo === '/login';
 if (!array_key_exists('logado', $_SESSION) && !$isLoginRoute) {
     header('Location: /login ');
@@ -29,10 +35,10 @@ if (!array_key_exists('logado', $_SESSION) && !$isLoginRoute) {
 
 $key = "$httpMethod|$pathInfo";
 
-if (array_key_exists($key, $routes)){
+if (array_key_exists($key, $routes)) {
     $controllerClass = $routes["$httpMethod|$pathInfo"];
     $controller = new $controllerClass($videoRepository);
-}else {
+} else {
     $controller = new Error404Controller();
 }
 /** @var Alura\Mvc\Controller\Controller $controller */

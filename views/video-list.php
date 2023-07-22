@@ -21,7 +21,7 @@
         <div class="descricao-video">
             <img src="../img/logo.png" alt="logo canal alura">
             <h3><?php echo $video->title; ?></h3>
-            <div class="acoes-video">
+            <div class="acoes-video">   
                 <a href="/editar-video?id=<?= $video->id; ?>">Editar</a>
 
                 <?php if ($video->getFilePath() !== null): ?>
