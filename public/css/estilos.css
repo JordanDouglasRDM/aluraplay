@@ -9,6 +9,10 @@
     box-sizing: border-box;
 }
 
+body > header {
+    height: 80px;
+}
+
 body {
     font-family: Roboto, Arial, Helvetica, sans-serif;
     background-color: var(--azul-claro);
@@ -108,4 +112,9 @@ body {
         height: 100vh;
     }
 
+}
+
+.formulario__titulo.erro {
+    color: red;
+    margin-top: 1rem;
 }

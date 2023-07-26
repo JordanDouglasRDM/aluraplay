@@ -1,5 +1,6 @@
-<?php require_once __DIR__ . '/inicio-html.php';
+<?php
 /** @var \Alura\Mvc\Entity\Video[] $videoList */
+$this->layout('layout');
 ?>
 
     <ul class="videos__container" alt="videos alura">
@@ -33,4 +34,4 @@
         </li>
         <?php endforeach; ?>
         </ul>
-        <?php require_once __DIR__ . '/fim-html.php';
+        <?php $this->insert('fim-html');

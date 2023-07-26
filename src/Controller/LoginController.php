@@ -2,44 +2,34 @@
 
 namespace Alura\Mvc\Controller;
 
-class LoginController implements Controller
-{
-    public function __construct()
-    {
-        $host = 'localhost';
-        $dbname = 'db-aluraplay';
-        $username = 'root';
-        $password = '';
+use Alura\Mvc\Helper\FlashMessageTrait;
+use Alura\Mvc\Repository\UserRepository;
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-        $this->pdo = new \PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+class LoginController implements RequestHandlerInterface
+{
+    use FlashMessageTrait;
+
+    public function __construct(private UserRepository $repository)
+    {
     }
 
-    public function processaRequisicao(): void
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-        $password = filter_input(INPUT_POST, 'password');
+        $queryBody = $request->getParsedBody();
+        $email = filter_var($queryBody['email'], FILTER_VALIDATE_EMAIL);
+        $password = filter_var($queryBody['password']);
+        $result = $this->repository->passwordVerify($email, $password);
 
-        $sql = 'SELECT * FROM users WHERE email = ?';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(1,$email);
-        $stmt->execute();
-
-        $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $correctPassword = password_verify($password, $userData['password'] ?? '');
-
-
-        if ($correctPassword) {
-            if (password_needs_rehash($userData['password'], PASSWORD_ARGON2ID)) {
-                $stmt = $this->pdo->prepare('UPDATE users SET password = ? WHERE id = ?');
-                $stmt->bindValue(1, password_hash($password, PASSWORD_ARGON2ID));
-                $stmt->bindValue(2, $userData['id']);
-                $stmt->execute();
-            }
-            $_SESSION['logado'] = true;
-            header('Location: /');
-        } else {
-            header('Location: /login?sucesso=0');
+        if (!$result) {
+            $this->addErrorMessage('Usuário ou senha inválidos');
+            return new Response(302, ['Location' => '/login']);
         }
+
+        $_SESSION['logado'] = true;
+        return new Response(302, ['Location' => '/']);
     }
 }
